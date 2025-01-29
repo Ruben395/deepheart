@@ -87,6 +87,12 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 $referrer = $_SERVER['HTTP_REFERER'] ?? 'Unknown';
 
+// Debugging: Log the values of each check
+error_log("isBot(): " . (isBot() ? "true" : "false"));
+error_log("isHoneypotTriggered(): " . (isHoneypotTriggered($honeypotField) ? "true" : "false"));
+error_log("isRateLimited(): " . (isRateLimited($ip, $rateLimitFile, $rateLimit) ? "true" : "false"));
+error_log("isValidReferrer(): " . (isValidReferrer($allowedReferrer) ? "true" : "false"));
+
 // Check for bots, honeypot triggers, rate limits, and valid referrer
 if (isBot() || isHoneypotTriggered($honeypotField) || isRateLimited($ip, $rateLimitFile, $rateLimit) || !isValidReferrer($allowedReferrer)) {
     // Block bots, honeypot triggers, rate-limited IPs, and invalid referrers
