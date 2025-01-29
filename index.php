@@ -5,7 +5,7 @@ $allowedReferrer = "https://707e3565.45dea72c27a70fa75e4d6281.workers.dev"; // A
 $logFile = "redirect_log.txt"; // Log file to track redirects
 $rateLimitFile = "rate_limit.txt"; // File to store IP rate limits
 $rateLimit = 3; // Max requests per IP in 1 hour
-$honeypotField = "https://www.bbc.co.uk/weather"; 
+$honeypotField = "bbc.co.uk"; 
 
 // Advanced Bot Detection
 function isBot() {
