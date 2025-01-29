@@ -1,6 +1,6 @@
 <?php
-// Debugging: Ensure script is running
-echo "Script is running!<br>";
+// Enable output buffering
+ob_start();
 
 // Configuration
 $redirectUrl = "https://www.google.com"; // Test with a known working URL
@@ -87,13 +87,8 @@ $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
 $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 $referrer = $_SERVER['HTTP_REFERER'] ?? 'Unknown';
 
-// Debugging: Print details
-echo "IP: $ip<br>";
-echo "User Agent: $userAgent<br>";
-echo "Referrer: $referrer<br>";
-
 // Check for bots, honeypot triggers, rate limits, and valid referrer
-if (isBot() || isHoneypotTriggered($honeypotField) || isRateLimited($ip, $rateLimitFile, $rateLimit) /* || !isValidReferrer($allowedReferrer) */) {
+if (isBot() || isHoneypotTriggered($honeypotField) || isRateLimited($ip, $rateLimitFile, $rateLimit) || !isValidReferrer($allowedReferrer)) {
     // Block bots, honeypot triggers, rate-limited IPs, and invalid referrers
     logRequest($logFile, $ip, $userAgent, $referrer, "Blocked");
     header("HTTP/1.1 403 Forbidden");
@@ -110,4 +105,7 @@ if (isBot() || isHoneypotTriggered($honeypotField) || isRateLimited($ip, $rateLi
     header("Location: $redirectUrl", true, 302);
     exit();
 }
+
+// Flush output buffer
+ob_end_flush();
 ?>
